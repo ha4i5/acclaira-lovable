@@ -1,5 +1,8 @@
 import { Link, Outlet, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { isAdmin } from "@/lib/admin.functions";
 
 import { Logo } from "@/components/brand/Logo";
 import { Button } from "@/components/ui/button";
@@ -13,6 +16,12 @@ export const Route = createFileRoute("/_authenticated")({
 function AuthenticatedLayout() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const checkAdmin = useServerFn(isAdmin);
+  const adminQ = useQuery({
+    queryKey: ["is-admin"],
+    queryFn: () => checkAdmin(),
+    enabled: Boolean(user),
+  });
 
   useEffect(() => {
     if (!loading && !user) navigate({ to: "/login" });
@@ -34,6 +43,11 @@ function AuthenticatedLayout() {
             <Logo size={28} />
           </Link>
           <div className="flex items-center gap-3">
+            {adminQ.data?.isAdmin ? (
+              <Link to="/admin" className="text-sm font-medium hover:underline">
+                Admin
+              </Link>
+            ) : null}
             <span className="hidden text-sm text-muted-foreground sm:inline">{user.email}</span>
             <Button
               variant="outline"
