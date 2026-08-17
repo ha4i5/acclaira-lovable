@@ -153,7 +153,7 @@ export const adjustCredits = createServerFn({ method: "POST" })
         _user_id: data.userId,
         _amount: -data.amount,
         _reason: data.reason,
-        _module_key: null,
+        _module_key: "adjustment",
         _meta: { by: context.userId },
       });
       if (error) throw new Error("Could not deduct credits (insufficient balance?)");
