@@ -47,6 +47,162 @@ export type Database = {
         }
         Relationships: []
       }
+      api_keys: {
+        Row: {
+          created_at: string
+          id: string
+          key_hash: string
+          key_prefix: string
+          last_used_at: string | null
+          name: string
+          revoked: boolean
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          key_hash: string
+          key_prefix: string
+          last_used_at?: string | null
+          name: string
+          revoked?: boolean
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          key_hash?: string
+          key_prefix?: string
+          last_used_at?: string | null
+          name?: string
+          revoked?: boolean
+          user_id?: string
+        }
+        Relationships: []
+      }
+      brands: {
+        Row: {
+          accent_color: string
+          created_at: string
+          handle: string | null
+          id: string
+          is_default: boolean
+          name: string
+          user_id: string
+          watermark_text: string | null
+        }
+        Insert: {
+          accent_color?: string
+          created_at?: string
+          handle?: string | null
+          id?: string
+          is_default?: boolean
+          name: string
+          user_id: string
+          watermark_text?: string | null
+        }
+        Update: {
+          accent_color?: string
+          created_at?: string
+          handle?: string | null
+          id?: string
+          is_default?: boolean
+          name?: string
+          user_id?: string
+          watermark_text?: string | null
+        }
+        Relationships: []
+      }
+      credit_transactions: {
+        Row: {
+          amount: number
+          balance_after: number
+          created_at: string
+          id: string
+          meta: Json
+          module_key: string | null
+          reason: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          balance_after: number
+          created_at?: string
+          id?: string
+          meta?: Json
+          module_key?: string | null
+          reason: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          balance_after?: number
+          created_at?: string
+          id?: string
+          meta?: Json
+          module_key?: string | null
+          reason?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      generations: {
+        Row: {
+          created_at: string
+          credits_used: number
+          headline: string
+          id: string
+          language: string
+          module_key: string
+          output: Json
+          source: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          credits_used?: number
+          headline: string
+          id?: string
+          language?: string
+          module_key: string
+          output?: Json
+          source?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          credits_used?: number
+          headline?: string
+          id?: string
+          language?: string
+          module_key?: string
+          output?: Json
+          source?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      module_rates: {
+        Row: {
+          credits: number
+          label: string
+          module_key: string
+          updated_at: string
+        }
+        Insert: {
+          credits: number
+          label: string
+          module_key: string
+          updated_at?: string
+        }
+        Update: {
+          credits?: number
+          label?: string
+          module_key?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -109,12 +265,31 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      grant_credits: {
+        Args: {
+          _amount: number
+          _meta?: Json
+          _reason: string
+          _user_id: string
+        }
+        Returns: number
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
         Returns: boolean
+      }
+      spend_credits: {
+        Args: {
+          _amount: number
+          _meta?: Json
+          _module_key: string
+          _reason: string
+          _user_id: string
+        }
+        Returns: number
       }
     }
     Enums: {
