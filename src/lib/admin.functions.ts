@@ -116,5 +116,5 @@ export const listAuditLog = createServerFn({ method: "GET" })
       .order("created_at", { ascending: false })
       .limit(100);
     if (error) throw new Error(error.message);
-    return data ?? [];
+    return (data ?? []) as AuditEntry[];
   });
