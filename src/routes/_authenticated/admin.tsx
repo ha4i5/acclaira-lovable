@@ -229,7 +229,7 @@ function AdminPage() {
                           variant="outline"
                           onClick={() => {
                             const amount = Number(creditDraft[u.id]);
-                            if (!amount) return toast.error("Enter a non-zero amount");
+                            if (!amount) { toast.error("Enter a non-zero amount"); return; }
                             creditsM.mutate({ userId: u.id, amount, reason: "admin adjustment" });
                             setCreditDraft((d) => ({ ...d, [u.id]: "" }));
                           }}
@@ -286,7 +286,7 @@ function AdminPage() {
   );
 }
 
-function StatCard({ label, value }: { label: string; value?: number }) {
+function StatCard({ label, value }: { label: string; value: number | undefined }) {
   return (
     <div className="rounded-2xl border border-border bg-card p-5">
       <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{label}</p>
