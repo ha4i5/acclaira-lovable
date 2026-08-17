@@ -42,6 +42,12 @@ function AuthenticatedLayout() {
           <Link to="/">
             <Logo size={28} />
           </Link>
+          <nav className="hidden items-center gap-5 text-sm font-medium text-muted-foreground md:flex">
+            <Link to="/dashboard" activeProps={{ className: "text-primary" }} className="hover:text-primary">Dashboard</Link>
+            <Link to="/studio" activeProps={{ className: "text-primary" }} className="hover:text-primary">Studio</Link>
+            <Link to="/credits" activeProps={{ className: "text-primary" }} className="hover:text-primary">Credits</Link>
+            <Link to="/api-keys" activeProps={{ className: "text-primary" }} className="hover:text-primary">API keys</Link>
+          </nav>
           <div className="flex items-center gap-3">
             {adminQ.data?.isAdmin ? (
               <Link to="/admin" className="text-sm font-medium hover:underline">

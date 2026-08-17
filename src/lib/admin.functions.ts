@@ -125,3 +125,161 @@ export const listAuditLog = createServerFn({ method: "GET" })
       created_at: e.created_at,
     }));
   });
+
+export const adjustCredits = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { userId: string; amount: number; reason: string }) => {
+    if (!input?.userId) throw new Error("Missing user");
+    const amount = Math.trunc(Number(input.amount));
+    if (!Number.isFinite(amount) || amount === 0 || Math.abs(amount) > 100000) {
+      throw new Error("Amount must be a non-zero integer up to 100000");
+    }
+    return { userId: input.userId, amount, reason: (input.reason ?? "admin adjustment").slice(0, 200) };
+  })
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context as Ctx);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    if (data.amount > 0) {
+      const { error } = await supabaseAdmin.rpc("grant_credits", {
+        _user_id: data.userId,
+        _amount: data.amount,
+        _reason: data.reason,
+        _meta: { by: context.userId },
+      });
+      if (error) throw new Error(error.message);
+    } else {
+      const { error } = await supabaseAdmin.rpc("spend_credits", {
+        _user_id: data.userId,
+        _amount: -data.amount,
+        _reason: data.reason,
+        _module_key: "adjustment",
+        _meta: { by: context.userId },
+      });
+      if (error) throw new Error("Could not deduct credits (insufficient balance?)");
+    }
+
+    const [{ data: actor }, { data: target }] = await Promise.all([
+      supabaseAdmin.from("profiles").select("email").eq("id", context.userId).maybeSingle(),
+      supabaseAdmin.from("profiles").select("email").eq("id", data.userId).maybeSingle(),
+    ]);
+    await supabaseAdmin.from("admin_audit_log").insert({
+      actor_id: context.userId,
+      actor_email: actor?.email ?? null,
+      action: "credits.adjust",
+      target_user_id: data.userId,
+      target_email: target?.email ?? null,
+      details: { amount: data.amount, reason: data.reason },
+    });
+
+    return { ok: true };
+  });
+
+export const setUserPlan = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { userId: string; plan: string }) => {
+    const plans = ["free", "starter", "pro", "agency"];
+    if (!input?.userId || !plans.includes(input.plan)) throw new Error("Invalid input");
+    return input;
+  })
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context as Ctx);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin.from("profiles").update({ plan: data.plan }).eq("id", data.userId);
+    if (error) throw new Error(error.message);
+
+    const [{ data: actor }, { data: target }] = await Promise.all([
+      supabaseAdmin.from("profiles").select("email").eq("id", context.userId).maybeSingle(),
+      supabaseAdmin.from("profiles").select("email").eq("id", data.userId).maybeSingle(),
+    ]);
+    await supabaseAdmin.from("admin_audit_log").insert({
+      actor_id: context.userId,
+      actor_email: actor?.email ?? null,
+      action: "plan.change",
+      target_user_id: data.userId,
+      target_email: target?.email ?? null,
+      details: { to: data.plan },
+    });
+    return { ok: true };
+  });
+
+export const setSuspended = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { userId: string; suspended: boolean }) => {
+    if (!input?.userId || typeof input.suspended !== "boolean") throw new Error("Invalid input");
+    return input;
+  })
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context as Ctx);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
+      .from("profiles")
+      .update({ suspended: data.suspended })
+      .eq("id", data.userId);
+    if (error) throw new Error(error.message);
+
+    const { data: actor } = await supabaseAdmin
+      .from("profiles").select("email").eq("id", context.userId).maybeSingle();
+    await supabaseAdmin.from("admin_audit_log").insert({
+      actor_id: context.userId,
+      actor_email: actor?.email ?? null,
+      action: data.suspended ? "user.suspend" : "user.reinstate",
+      target_user_id: data.userId,
+      details: {},
+    });
+    return { ok: true };
+  });
+
+export const setModuleRate = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { moduleKey: string; credits: number }) => {
+    const credits = Math.trunc(Number(input?.credits));
+    if (!input?.moduleKey || !Number.isFinite(credits) || credits < 0 || credits > 1000) {
+      throw new Error("Invalid rate");
+    }
+    return { moduleKey: input.moduleKey, credits };
+  })
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context as Ctx);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
+      .from("module_rates")
+      .update({ credits: data.credits, updated_at: new Date().toISOString() })
+      .eq("module_key", data.moduleKey);
+    if (error) throw new Error(error.message);
+
+    const { data: actor } = await supabaseAdmin
+      .from("profiles").select("email").eq("id", context.userId).maybeSingle();
+    await supabaseAdmin.from("admin_audit_log").insert({
+      actor_id: context.userId,
+      actor_email: actor?.email ?? null,
+      action: "pricing.change",
+      details: { module: data.moduleKey, credits: data.credits },
+    });
+    return { ok: true };
+  });
+
+export type AdminStats = {
+  users: number;
+  admins: number;
+  generations: number;
+  creditsOutstanding: number;
+};
+
+export const adminStats = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }): Promise<AdminStats> => {
+    await assertAdmin(context as Ctx);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const [{ data: profiles }, { data: roles }, { count: gens }] = await Promise.all([
+      supabaseAdmin.from("profiles").select("credits"),
+      supabaseAdmin.from("user_roles").select("role").eq("role", "admin"),
+      supabaseAdmin.from("generations").select("id", { count: "exact", head: true }),
+    ]);
+    return {
+      users: (profiles ?? []).length,
+      admins: (roles ?? []).length,
+      generations: gens ?? 0,
+      creditsOutstanding: (profiles ?? []).reduce((sum, p) => sum + (p.credits ?? 0), 0),
+    };
+  });
