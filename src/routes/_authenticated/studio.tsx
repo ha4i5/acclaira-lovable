@@ -144,13 +144,13 @@ function StudioPage() {
           {moduleKey === "post" ? (
             <div className="grid gap-6 lg:grid-cols-[1fr_1fr]">
               <div className="rounded-2xl border border-border bg-card p-6">
-                <Field label="Thumbnail title" value={result.thumbnail_title} />
-                <Field label="Subtitle" value={result.subtitle} />
-                <Field label="Caption" value={result.caption} />
+                <Field label="Thumbnail title" value={result["thumbnail_title"]} />
+                <Field label="Subtitle" value={result["subtitle"]} />
+                <Field label="Caption" value={result["caption"]} />
                 <div className="mt-4">
                   <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Hashtags</p>
                   <p className="mt-1 text-sm">
-                    {(result.hashtags ?? []).map((h: string) => `#${h}`).join(" ")}
+                    {(result["hashtags"] ?? []).map((h: string) => `#${h}`).join(" ")}
                   </p>
                 </div>
                 <div className="mt-4">
@@ -163,8 +163,8 @@ function StudioPage() {
                   <ThumbnailCanvas
                     key={r}
                     ratio={r}
-                    title={String(result.thumbnail_title ?? headline)}
-                    subtitle={String(result.subtitle ?? "")}
+                    title={String(result["thumbnail_title"] ?? headline)}
+                    subtitle={String(result["subtitle"] ?? "")}
                     handle={handle}
                     accent="#3EC3AC"
                   />
@@ -173,24 +173,24 @@ function StudioPage() {
             </div>
           ) : moduleKey === "article" ? (
             <div className="rounded-2xl border border-border bg-card p-6">
-              <Field label="SEO title" value={result.title} />
-              <Field label="Meta description" value={result.meta_description} />
-              <Field label="Slug" value={result.slug} />
-              <Field label="Keywords" value={(result.keywords ?? []).join(", ")} />
+              <Field label="SEO title" value={result["title"]} />
+              <Field label="Meta description" value={result["meta_description"]} />
+              <Field label="Slug" value={result["slug"]} />
+              <Field label="Keywords" value={(result["keywords"] ?? []).join(", ")} />
               <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Article</p>
               <pre className="mt-1 whitespace-pre-wrap font-sans text-sm leading-relaxed">
-                {String(result.body_markdown ?? "")}
+                {String(result["body_markdown"] ?? "")}
               </pre>
             </div>
           ) : (
             <div className="rounded-2xl border border-border bg-card p-6">
-              <Field label="Title" value={result.title} />
-              <Field label="Hook" value={result.hook} />
+              <Field label="Title" value={result["title"]} />
+              <Field label="Hook" value={result["hook"]} />
               <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Urdu script</p>
-              <p dir="rtl" className="mt-1 text-lg leading-loose">{String(result.script_urdu ?? "")}</p>
-              <Field label="Roman Urdu" value={result.script_roman} />
+              <p dir="rtl" className="mt-1 text-lg leading-loose">{String(result["script_urdu"] ?? "")}</p>
+              <Field label="Roman Urdu" value={result["script_roman"]} />
               <div className="mt-4 space-y-2">
-                {(result.scenes ?? []).map((s: any, i: number) => (
+                {(result["scenes"] ?? []).map((s: any, i: number) => (
                   <div key={i} className="rounded-lg border border-border p-3 text-sm">
                     <span className="font-mono text-xs text-muted-foreground">{s.t}</span>
                     <p className="mt-1 font-medium">{s.visual}</p>
@@ -198,7 +198,7 @@ function StudioPage() {
                   </div>
                 ))}
               </div>
-              <Field label="Call to action" value={result.cta} />
+              <Field label="Call to action" value={result["cta"]} />
             </div>
           )}
         </section>
