@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import type { AdminUser, AuditEntry } from "@/lib/admin.functions";
 import { isAdmin, listUsers, setUserRole, listAuditLog } from "@/lib/admin.functions";
 
 export const Route = createFileRoute("/_authenticated/admin")({
@@ -39,8 +40,8 @@ function AdminPage() {
   const adminQ = useQuery({ queryKey: ["is-admin"], queryFn: () => checkAdmin() });
   const allowed = adminQ.data?.isAdmin === true;
 
-  const usersQ = useQuery({ queryKey: ["admin-users"], queryFn: () => fetchUsers(), enabled: allowed });
-  const auditQ = useQuery({ queryKey: ["admin-audit"], queryFn: () => fetchAudit(), enabled: allowed });
+  const usersQ = useQuery({ queryKey: ["admin-users"], queryFn: () => fetchUsers() as Promise<AdminUser[]>, enabled: allowed });
+  const auditQ = useQuery({ queryKey: ["admin-audit"], queryFn: () => fetchAudit() as Promise<AuditEntry[]>, enabled: allowed });
 
   const roleM = useMutation({
     mutationFn: (vars: { userId: string; role: "admin" | "user" }) => changeRole({ data: vars }),
@@ -162,7 +163,7 @@ function AdminPage() {
                     <td className="px-4 py-3 font-mono text-xs">{e.action}</td>
                     <td className="px-4 py-3">{e.target_email ?? "—"}</td>
                     <td className="px-4 py-3 font-mono text-xs text-muted-foreground">
-                      {e.details ? JSON.stringify(e.details) : "—"}
+                      {e.details ?? "—"}
                     </td>
                   </tr>
                 ))

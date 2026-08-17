@@ -101,7 +101,7 @@ export type AuditEntry = {
   actor_email: string | null;
   action: string;
   target_email: string | null;
-  details: Record<string, unknown> | null;
+  details: string | null;
   created_at: string;
 };
 
@@ -116,5 +116,12 @@ export const listAuditLog = createServerFn({ method: "GET" })
       .order("created_at", { ascending: false })
       .limit(100);
     if (error) throw new Error(error.message);
-    return (data ?? []) as AuditEntry[];
+    return (data ?? []).map((e) => ({
+      id: e.id,
+      actor_email: e.actor_email,
+      action: e.action,
+      target_email: e.target_email,
+      details: e.details ? JSON.stringify(e.details) : null,
+      created_at: e.created_at,
+    }));
   });
