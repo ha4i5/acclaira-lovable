@@ -101,7 +101,7 @@ export type AuditEntry = {
   actor_email: string | null;
   action: string;
   target_email: string | null;
-  details: unknown;
+  details: Record<string, unknown> | null;
   created_at: string;
 };
 
