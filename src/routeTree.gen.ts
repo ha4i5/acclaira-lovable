@@ -22,6 +22,7 @@ import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedApiKeysRouteImport } from './routes/_authenticated/api-keys'
 import { Route as AuthenticatedCreditsRouteImport } from './routes/_authenticated/credits'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedSourcesRouteImport } from './routes/_authenticated/sources'
 import { Route as AuthenticatedStudioRouteImport } from './routes/_authenticated/studio'
 import { Route as ApiPublicV1GenerateRouteImport } from './routes/api/public/v1/generate'
 
@@ -89,6 +90,11 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedSourcesRoute = AuthenticatedSourcesRouteImport.update({
+  id: '/sources',
+  path: '/sources',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedStudioRoute = AuthenticatedStudioRouteImport.update({
   id: '/studio',
   path: '/studio',
@@ -113,6 +119,7 @@ export interface FileRoutesByFullPath {
   '/api-keys': typeof AuthenticatedApiKeysRoute
   '/credits': typeof AuthenticatedCreditsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/sources': typeof AuthenticatedSourcesRoute
   '/studio': typeof AuthenticatedStudioRoute
   '/api/public/v1/generate': typeof ApiPublicV1GenerateRoute
 }
@@ -129,6 +136,7 @@ export interface FileRoutesByTo {
   '/api-keys': typeof AuthenticatedApiKeysRoute
   '/credits': typeof AuthenticatedCreditsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/sources': typeof AuthenticatedSourcesRoute
   '/studio': typeof AuthenticatedStudioRoute
   '/api/public/v1/generate': typeof ApiPublicV1GenerateRoute
 }
@@ -147,6 +155,7 @@ export interface FileRoutesById {
   '/_authenticated/api-keys': typeof AuthenticatedApiKeysRoute
   '/_authenticated/credits': typeof AuthenticatedCreditsRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/sources': typeof AuthenticatedSourcesRoute
   '/_authenticated/studio': typeof AuthenticatedStudioRoute
   '/api/public/v1/generate': typeof ApiPublicV1GenerateRoute
 }
@@ -165,6 +174,7 @@ export interface FileRouteTypes {
     | '/api-keys'
     | '/credits'
     | '/dashboard'
+    | '/sources'
     | '/studio'
     | '/api/public/v1/generate'
   fileRoutesByTo: FileRoutesByTo
@@ -181,6 +191,7 @@ export interface FileRouteTypes {
     | '/api-keys'
     | '/credits'
     | '/dashboard'
+    | '/sources'
     | '/studio'
     | '/api/public/v1/generate'
   id:
@@ -198,6 +209,7 @@ export interface FileRouteTypes {
     | '/_authenticated/api-keys'
     | '/_authenticated/credits'
     | '/_authenticated/dashboard'
+    | '/_authenticated/sources'
     | '/_authenticated/studio'
     | '/api/public/v1/generate'
   fileRoutesById: FileRoutesById
@@ -308,6 +320,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/sources': {
+      id: '/_authenticated/sources'
+      path: '/sources'
+      fullPath: '/sources'
+      preLoaderRoute: typeof AuthenticatedSourcesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/studio': {
       id: '/_authenticated/studio'
       path: '/studio'
@@ -330,6 +349,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedApiKeysRoute: typeof AuthenticatedApiKeysRoute
   AuthenticatedCreditsRoute: typeof AuthenticatedCreditsRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedSourcesRoute: typeof AuthenticatedSourcesRoute
   AuthenticatedStudioRoute: typeof AuthenticatedStudioRoute
 }
 
@@ -338,6 +358,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedApiKeysRoute: AuthenticatedApiKeysRoute,
   AuthenticatedCreditsRoute: AuthenticatedCreditsRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedSourcesRoute: AuthenticatedSourcesRoute,
   AuthenticatedStudioRoute: AuthenticatedStudioRoute,
 }
 
