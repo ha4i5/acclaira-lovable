@@ -72,6 +72,8 @@ export const publishArticle = createServerFn({ method: "POST" })
       .select("id")
       .single();
 
+    const articleId: string | null = article?.id ?? null;
+
     try {
       const result = await publishToWordPress(conn, {
         title: data.title,
@@ -81,21 +83,23 @@ export const publishArticle = createServerFn({ method: "POST" })
         status: data.status,
       });
 
-      await supabaseAdmin
-        .from("articles")
-        .update({ status: data.status === "draft" ? "draft" : "published", published_url: result.url })
-        .eq("id", article?.id);
+      if (articleId) {
+        await supabaseAdmin
+          .from("articles")
+          .update({ status: data.status === "draft" ? "draft" : "published", published_url: result.url })
+          .eq("id", articleId);
+      }
 
       await supabaseAdmin.from("publish_jobs").insert({
         user_id: context.userId,
         platform: "wordpress",
         target: conn.label,
         status: "success",
-        article_id: article?.id,
+        article_id: articleId,
         post_url: result.url,
       });
 
-      return { url: result.url, articleId: article?.id as string };
+      return { url: result.url, articleId };
     } catch (err) {
       const message = err instanceof Error ? err.message : "Publish failed";
       await supabaseAdmin.from("publish_jobs").insert({
@@ -103,11 +107,12 @@ export const publishArticle = createServerFn({ method: "POST" })
         platform: "wordpress",
         target: conn.label,
         status: "failed",
-        article_id: article?.id,
+        article_id: articleId,
         error: message.slice(0, 500),
       });
       throw new Error(message);
     }
+
   });
 
 /** Publish a social post to a Facebook Page or Instagram account. */
