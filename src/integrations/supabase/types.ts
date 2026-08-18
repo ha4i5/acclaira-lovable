@@ -80,6 +80,92 @@ export type Database = {
         }
         Relationships: []
       }
+      articles: {
+        Row: {
+          body_markdown: string
+          created_at: string
+          feature_image_url: string | null
+          generation_id: string | null
+          id: string
+          keywords: Json
+          meta_description: string | null
+          published_url: string | null
+          slug: string
+          status: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          body_markdown: string
+          created_at?: string
+          feature_image_url?: string | null
+          generation_id?: string | null
+          id?: string
+          keywords?: Json
+          meta_description?: string | null
+          published_url?: string | null
+          slug: string
+          status?: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          body_markdown?: string
+          created_at?: string
+          feature_image_url?: string | null
+          generation_id?: string | null
+          id?: string
+          keywords?: Json
+          meta_description?: string | null
+          published_url?: string | null
+          slug?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "articles_generation_id_fkey"
+            columns: ["generation_id"]
+            isOneToOne: false
+            referencedRelation: "generations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      assets: {
+        Row: {
+          created_at: string
+          id: string
+          kind: string
+          meta: Json
+          mime: string | null
+          path: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          kind: string
+          meta?: Json
+          mime?: string | null
+          path: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          kind?: string
+          meta?: Json
+          mime?: string | null
+          path?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       brands: {
         Row: {
           accent_color: string
@@ -146,6 +232,39 @@ export type Database = {
         }
         Relationships: []
       }
+      design_templates: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_global: boolean
+          layout: string
+          name: string
+          palette: Json
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_global?: boolean
+          layout?: string
+          name: string
+          palette?: Json
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_global?: boolean
+          layout?: string
+          name?: string
+          palette?: Json
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       generations: {
         Row: {
           created_at: string
@@ -203,6 +322,36 @@ export type Database = {
         }
         Relationships: []
       }
+      news_sources: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          kind: string
+          label: string
+          url: string
+          user_id: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          kind?: string
+          label: string
+          url: string
+          user_id: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          kind?: string
+          label?: string
+          url?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -236,6 +385,102 @@ export type Database = {
           referral_code?: string
           suspended?: boolean
           updated_at?: string
+        }
+        Relationships: []
+      }
+      publish_jobs: {
+        Row: {
+          article_id: string | null
+          created_at: string
+          error: string | null
+          generation_id: string | null
+          id: string
+          payload: Json
+          platform: string
+          post_url: string | null
+          status: string
+          target: string | null
+          user_id: string
+        }
+        Insert: {
+          article_id?: string | null
+          created_at?: string
+          error?: string | null
+          generation_id?: string | null
+          id?: string
+          payload?: Json
+          platform: string
+          post_url?: string | null
+          status?: string
+          target?: string | null
+          user_id: string
+        }
+        Update: {
+          article_id?: string | null
+          created_at?: string
+          error?: string | null
+          generation_id?: string | null
+          id?: string
+          payload?: Json
+          platform?: string
+          post_url?: string | null
+          status?: string
+          target?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "publish_jobs_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "publish_jobs_generation_id_fkey"
+            columns: ["generation_id"]
+            isOneToOne: false
+            referencedRelation: "generations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      social_connections: {
+        Row: {
+          active: boolean
+          config: Json
+          created_at: string
+          external_id: string | null
+          id: string
+          label: string
+          platform: string
+          secret: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          active?: boolean
+          config?: Json
+          created_at?: string
+          external_id?: string | null
+          id?: string
+          label: string
+          platform: string
+          secret?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          active?: boolean
+          config?: Json
+          created_at?: string
+          external_id?: string | null
+          id?: string
+          label?: string
+          platform?: string
+          secret?: string | null
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
