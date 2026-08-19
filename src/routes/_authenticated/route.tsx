@@ -40,7 +40,7 @@ function AuthenticatedLayout() {
       <header className="border-b border-border bg-card">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
           <Link to="/">
-            <Logo size={28} />
+            <Logo size={38} />
           </Link>
           <nav className="hidden items-center gap-5 text-sm font-medium text-muted-foreground md:flex">
             <Link to="/dashboard" activeProps={{ className: "text-primary" }} className="hover:text-primary">Dashboard</Link>

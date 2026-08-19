@@ -95,7 +95,7 @@ function HomePage() {
                 <span className="lamp-live h-1.5 w-1.5 rounded-full bg-current" /> BREAKING
               </div>
               <div className="absolute top-4 right-4 text-navy-foreground opacity-90">
-                <LogoMark size={26} light />
+                <LogoMark size={40} light />
               </div>
               <div className="p-5 pb-6">
                 <p className="font-display text-[22px] leading-snug font-bold text-navy-foreground">
