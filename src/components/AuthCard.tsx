@@ -63,7 +63,7 @@ export function AuthCard({ mode }: { mode: Mode }) {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-paper px-5 py-12">
       <Link to="/" className="mb-8">
-        <Logo size={34} />
+        <Logo size={44} />
       </Link>
 
       <div className="w-full max-w-sm rounded-2xl border border-border bg-card p-7 shadow-sm">

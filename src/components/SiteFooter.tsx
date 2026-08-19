@@ -7,7 +7,7 @@ export function SiteFooter() {
     <footer className="bg-navy text-navy-foreground">
       <div className="mx-auto grid max-w-6xl gap-8 px-5 py-12 sm:grid-cols-3">
         <div>
-          <Logo dark />
+          <Logo dark size={44} />
           <p className="mt-3 max-w-xs text-sm text-navy-foreground/60">
             One headline in. A viral post, an SEO article, and an Urdu video out.
           </p>
