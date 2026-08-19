@@ -1,44 +1,39 @@
-type LogoMarkProps = { size?: number; className?: string };
+import markAsset from "@/assets/acclaira-mark.png.asset.json";
+import wordmarkDark from "@/assets/acclaira-wordmark-dark.png.asset.json";
+import wordmarkLight from "@/assets/acclaira-wordmark-light.png.asset.json";
 
-export function LogoMark({ size = 32, className }: LogoMarkProps) {
+type LogoMarkProps = { size?: number; className?: string; light?: boolean };
+
+export function LogoMark({ size = 32, className, light = false }: LogoMarkProps) {
   return (
-    <svg
-      viewBox="0 0 256 228"
+    <img
+      src={markAsset.url}
       width={size}
-      height={(size * 228) / 256}
+      height={size}
+      alt=""
       aria-hidden="true"
       className={className}
-    >
-      <g
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        fill="none"
-      >
-        <path d="M120,22 L22,202" strokeWidth="14" />
-        <path d="M120,22 L178,202" strokeWidth="14" />
-        <path d="M56,142 L152,142" strokeWidth="9" />
-      </g>
-      <g className="fill-teal">
-        <polygon points="30,182 202,105 208,119 36,196" />
-        <polygon points="200,92 242,110 204,131" />
-      </g>
-    </svg>
+      style={{
+        width: size,
+        height: size,
+        objectFit: "contain",
+        filter: light ? "brightness(0) invert(1)" : undefined,
+      }}
+    />
   );
 }
 
+
 export function Logo({ dark = false, size = 30 }: { dark?: boolean; size?: number }) {
   return (
-    <span
-      className={`inline-flex items-center gap-2.5 ${dark ? "text-navy-foreground" : "text-primary"}`}
-    >
+    <span className="inline-flex items-center gap-2">
       <LogoMark size={size} />
-      <span
-        className="font-display font-bold tracking-tight"
-        style={{ fontSize: size * 0.72 }}
-      >
-        acclaira
-      </span>
+      <img
+        src={dark ? wordmarkLight.url : wordmarkDark.url}
+        alt="Acclaira"
+        style={{ height: size * 0.6 }}
+        className="w-auto object-contain"
+      />
     </span>
   );
 }
